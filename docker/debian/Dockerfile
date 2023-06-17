@@ -1,12 +1,13 @@
 FROM debian:latest
-ARG GIT_REPO_URL
-ARG PROJECT
+ENV GIT_REPO_URL=git://git.musl-libc.org/musl
+ENV PROJECT=musl
+ENV MY_LOCAL_IP=localhost
 
-RUN \
-    : "${GIT_REPO_URL:?set GIT_REPO_URL to the repo git url}"
+#RUN \
+#    : "${GIT_REPO_URL:?set GIT_REPO_URL to the repo git url}"
 
-RUN \
-    : "${PROJECT:?set PROJECT to set the project name}"
+#RUN \
+#    : "${PROJECT:?set PROJECT to set the project name}"
 
 RUN \
     echo "repo url to index: ${GIT_REPO_URL}"
@@ -28,10 +29,10 @@ RUN \
     wget
 
 RUN \
-  pip3 install falcon
+  python3 -m pip install falcon --break-system-packages
 
-RUN \
-  ln -s /usr/bin/pytest-3 /usr/bin/pytest
+#RUN \
+#  ln -s /usr/bin/pytest-3 /usr/bin/pytest
 
 RUN \
   wget https://bootlin.com/pub/elixir/universal-ctags_0+git20200526-0ubuntu1_amd64.deb
@@ -43,7 +44,7 @@ RUN \
   wget https://bootlin.com/pub/elixir/Pygments-2.6.1.elixir-py3-none-any.whl
 
 RUN \
-  pip3 install Pygments-2.6.1.elixir-py3-none-any.whl
+  python3 -m pip install Pygments-2.6.1.elixir-py3-none-any.whl --break-system-packages
 
 RUN \
   git config --global user.email 'elixir@dummy.com' && \
@@ -56,12 +57,12 @@ RUN \
   mkdir -p /srv/elixir-data/
 
 RUN \
-  mkdir -p /srv/elixir-data/$PROJECT/repo && \
-  mkdir -p /srv/elixir-data/$PROJECT/data && \
-  git clone --bare "${GIT_REPO_URL}" /srv/elixir-data/$PROJECT/repo/
+  mkdir -p /srv/elixir-data/${PROJECT}/repo && \
+  mkdir -p /srv/elixir-data/${PROJECT}/data && \
+  git clone --bare "${GIT_REPO_URL}" /srv/elixir-data/${PROJECT}/repo/
 
-ENV LXR_REPO_DIR /srv/elixir-data/$PROJECT/repo
-ENV LXR_DATA_DIR /srv/elixir-data/$PROJECT/data
+ENV LXR_REPO_DIR /srv/elixir-data/${PROJECT}/repo
+ENV LXR_DATA_DIR /srv/elixir-data/${PROJECT}/data
 
 RUN \
   cd /usr/local/elixir/ && \
