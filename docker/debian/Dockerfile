@@ -1,6 +1,6 @@
 FROM debian:latest
-ENV GIT_REPO_URL=https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-ENV PROJECT=linux
+ENV GIT_REPO_URL=git://git.musl-libc.org/musl
+ENV PROJECT=musl
 ENV MY_LOCAL_IP=localhost
 
 #RUN \
@@ -71,6 +71,9 @@ RUN \
 
 # apache elixir config, see elixir README
 # make apache less stricter about cgitb spam headers
+
+RUN \
+  chown -R www-data /srv/elixir-data/
 
 COPY ./000-default.conf /etc/apache2/sites-available/000-default.conf
 
