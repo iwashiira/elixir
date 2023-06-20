@@ -1,7 +1,4 @@
 FROM debian:latest
-ENV GIT_REPO_URL=git://git.musl-libc.org/musl
-ENV PROJECT=musl
-ENV MY_LOCAL_IP=localhost
 
 #RUN \
 #    : "${GIT_REPO_URL:?set GIT_REPO_URL to the repo git url}"
@@ -56,6 +53,12 @@ RUN \
 RUN \
   mkdir -p /srv/elixir-data/
 
+ENV MY_LOCAL_IP=localhost
+
+#glibc
+ENV GIT_REPO_URL=git://sourceware.org/git/glibc.git
+ENV PROJECT=glibc
+
 RUN \
   mkdir -p /srv/elixir-data/$PROJECT/repo && \
   mkdir -p /srv/elixir-data/$PROJECT/data && \
@@ -69,6 +72,39 @@ RUN \
   ./script.sh list-tags && \
   python3 -u ./update.py
 
+#QEMU
+ENV GIT_REPO_URL=https://gitlab.com/qemu-project/qemu.git
+ENV PROJECT=qemu
+
+RUN \
+  mkdir -p /srv/elixir-data/$PROJECT/repo && \
+  mkdir -p /srv/elixir-data/$PROJECT/data && \
+  git clone --bare "${GIT_REPO_URL}" /srv/elixir-data/$PROJECT/repo/
+
+ENV LXR_REPO_DIR /srv/elixir-data/$PROJECT/repo
+ENV LXR_DATA_DIR /srv/elixir-data/$PROJECT/data
+
+RUN \
+  cd /usr/local/elixir/ && \
+  ./script.sh list-tags && \
+  python3 -u ./update.py
+
+#linux
+ENV GIT_REPO_URL=git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+ENV PROJECT=linux
+
+RUN \
+  mkdir -p /srv/elixir-data/$PROJECT/repo && \
+  mkdir -p /srv/elixir-data/$PROJECT/data && \
+  git clone --bare "${GIT_REPO_URL}" /srv/elixir-data/$PROJECT/repo/
+
+ENV LXR_REPO_DIR /srv/elixir-data/$PROJECT/repo
+ENV LXR_DATA_DIR /srv/elixir-data/$PROJECT/data
+
+RUN \
+  cd /usr/local/elixir/ && \
+  ./script.sh list-tags && \
+  python3 -u ./update.py
 # apache elixir config, see elixir README
 # make apache less stricter about cgitb spam headers
 
